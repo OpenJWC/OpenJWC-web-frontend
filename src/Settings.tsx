@@ -45,6 +45,17 @@ function toEditableString(value: unknown): string {
   }
   return String(value);
 }
+
+const SETTING_FIELD_HINTS: Record<string, string> = {
+  prompt_debug:
+    "设置为 1 会在日志中打印更多 prompt 注入调试信息，设置为 0 则关闭。",
+  prompt_preview_length: "指定 prompt 文本预览部分长度。",
+  preview_length: "指定 prompt 文本预览部分长度。",
+  crawler_interval_minutes: "爬虫周期，单位为分钟。",
+  crawler_days_gap: "爬虫只抓取从今天往前 crawler_days_gap 天内的资讯。",
+  search_max_day_diff: "语义搜索仅检索最近 search_max_day_diff 天内的资讯。",
+  search_max_diff: "语义搜索仅检索最近 search_max_diff 天内的资讯。",
+};
 export default function Settings() {
   const [state, setState] = useState<SettingsState>({
     data: null,
@@ -261,6 +272,11 @@ export default function Settings() {
                           }
                           className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
+                      )}
+                      {SETTING_FIELD_HINTS[key] && (
+                        <p className="text-xs text-slate-500">
+                          {SETTING_FIELD_HINTS[key]}
+                        </p>
                       )}
                     </div>
                   ))}
