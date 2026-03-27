@@ -15,6 +15,7 @@ import { Skeleton } from "./components/ui/skeleton";
 import { getStats, getSysInfo } from "./services/monitorService";
 import type { Data } from "./types/monitor";
 import type { StatsData } from "./types/stats";
+
 type DashboardState = {
   sysInfo: Data | null;
   stats: StatsData | null;
@@ -22,6 +23,7 @@ type DashboardState = {
   error: string | null;
   lastUpdatedAt: number | null;
 };
+
 export default function DashBoard() {
   const [state, setState] = useState<DashboardState>({
     sysInfo: null,

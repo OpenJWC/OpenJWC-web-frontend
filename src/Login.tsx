@@ -5,8 +5,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
-import loginBackground from "./assets/image.png";
-import iconTest from "./assets/icon_test.png";
 import { clearAuthError, login } from "./store/authSlice";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 
@@ -65,22 +63,12 @@ export default function Login() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
-      <img
-        src={loginBackground}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-      <div className="absolute inset-0 bg-slate-900/60" />
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/45 via-slate-900/20 to-cyan-900/40" />
-
-      <div className="relative w-full max-w-md rounded-2xl border border-white/25 bg-white/90 p-8 shadow-2xl backdrop-blur-md">
+    <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
         <div className="mb-6 flex items-center gap-3">
-          <img
-            src={iconTest}
-            alt="OPENJWC"
-            className="h-10 w-10 rounded-lg object-cover ring-1 ring-slate-200"
-          />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-sm font-semibold text-white">
+            OW
+          </div>
           <div>
             <h1 className="text-2xl font-semibold text-slate-900">
               管理员登录

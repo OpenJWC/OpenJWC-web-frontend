@@ -12,6 +12,29 @@ type LogsState = {
 
 const DEFAULT_PAGE_SIZE = 10;
 
+function getLevelClass(level: string): string {
+  const normalized = level.trim().toLowerCase();
+  if (["fatal", "panic", "critical"].includes(normalized)) {
+    return "bg-red-100 text-red-700 ring-red-200";
+  }
+  if (["error", "err"].includes(normalized)) {
+    return "bg-rose-100 text-rose-700 ring-rose-200";
+  }
+  if (["warn", "warning"].includes(normalized)) {
+    return "bg-amber-100 text-amber-700 ring-amber-200";
+  }
+  if (["info", "information"].includes(normalized)) {
+    return "bg-blue-100 text-blue-700 ring-blue-200";
+  }
+  if (["debug", "trace"].includes(normalized)) {
+    return "bg-slate-100 text-slate-700 ring-slate-200";
+  }
+  if (["success", "ok"].includes(normalized)) {
+    return "bg-emerald-100 text-emerald-700 ring-emerald-200";
+  }
+  return "bg-violet-100 text-violet-700 ring-violet-200";
+}
+
 export default function Logs() {
   const [state, setState] = useState<LogsState>({
     total: 0,
@@ -204,7 +227,15 @@ export default function Logs() {
                     <td className="whitespace-nowrap px-4 py-3">
                       {log.timestamp}
                     </td>
-                    <td className="px-4 py-3">{log.level}</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${getLevelClass(
+                          log.level
+                        )}`}
+                      >
+                        {log.level}
+                      </span>
+                    </td>
                     <td className="px-4 py-3">{log.module}</td>
                     <td className="px-4 py-3">{log.location}</td>
                     <td className="max-w-[520px] break-all px-4 py-3">
