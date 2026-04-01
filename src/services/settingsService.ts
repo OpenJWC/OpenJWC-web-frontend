@@ -2,6 +2,8 @@ import { apiClient } from "../api/client";
 import type {
   ChangePasswordPayload,
   ChangePasswordResponse,
+  RefreshMottoResponse,
+  RunCrawlerResponse,
   ResetSettingsPayload,
   ResetSettingsResponse,
   SettingItem,
@@ -128,4 +130,40 @@ export async function resetSettings(payload: ResetSettingsPayload = []): Promise
     }
   );
   return parseResetSettingsResponse(response.data);
+}
+
+function parseRefreshMottoResponse(response: RefreshMottoResponse): string {
+  if (typeof response.msg !== "string" || response.msg.length === 0) {
+    throw new Error("刷新每日一言返回格式不正确");
+  }
+  return response.msg;
+}
+
+export async function refreshMotto(): Promise<string> {
+  const response = await apiClient.put<RefreshMottoResponse>(
+    "/api/v1/admin/settings/motto",
+    {},
+    {
+      headers: createSettingsHeaders(),
+    }
+  );
+  return parseRefreshMottoResponse(response.data);
+}
+
+function parseRunCrawlerResponse(response: RunCrawlerResponse): string {
+  if (typeof response.msg !== "string" || response.msg.length === 0) {
+    throw new Error("手动执行爬虫返回格式不正确");
+  }
+  return response.msg;
+}
+
+export async function runCrawler(): Promise<string> {
+  const response = await apiClient.put<RunCrawlerResponse>(
+    "/api/v1/admin/settings/crawler",
+    {},
+    {
+      headers: createSettingsHeaders(),
+    }
+  );
+  return parseRunCrawlerResponse(response.data);
 }

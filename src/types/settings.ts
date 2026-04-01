@@ -56,3 +56,15 @@ export interface ResetSettingsResponse {
   data: Record<string, never>;
   [property: string]: unknown;
 }
+
+export interface RefreshMottoResponse {
+  msg: string;
+  data: Record<string, never>;
+  [property: string]: unknown;
+}
+
+export interface RunCrawlerResponse {
+  msg: string;
+  data: Record<string, never>;
+  [property: string]: unknown;
+}

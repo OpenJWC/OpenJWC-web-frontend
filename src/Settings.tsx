@@ -1,4 +1,4 @@
-import { RefreshCw } from "lucide-react";
+import { Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
@@ -14,6 +14,8 @@ import { Skeleton } from "./components/ui/skeleton";
 import {
   changeAdminPassword,
   getSettings,
+  refreshMotto,
+  runCrawler,
   resetSettings,
   updateSettings,
 } from "./services/settingsService";
@@ -24,15 +26,7 @@ type SettingsState = {
   error: string | null;
   lastUpdatedAt: number | null;
 };
-function formatValue(value: unknown): string {
-  if (value === null || value === undefined) {
-    return "-";
-  }
-  if (typeof value === "object") {
-    return JSON.stringify(value);
-  }
-  return String(value);
-}
+
 function toEditableString(value: unknown): string {
   if (value === null || value === undefined) {
     return "";
@@ -56,6 +50,17 @@ const SETTING_FIELD_HINTS: Record<string, string> = {
   search_max_day_diff: "语义搜索仅检索最近 search_max_day_diff 天内的资讯。",
   search_max_diff: "语义搜索仅检索最近 search_max_diff 天内的资讯。",
 };
+
+function isSensitiveSettingKey(key: string): boolean {
+  const normalized = key.toLowerCase();
+  return (
+    normalized.includes("api_key") ||
+    normalized.includes("secret") ||
+    normalized.includes("token") ||
+    normalized.includes("password")
+  );
+}
+
 export default function Settings() {
   const [state, setState] = useState<SettingsState>({
     data: null,
@@ -66,11 +71,16 @@ export default function Settings() {
   const [settingsDraft, setSettingsDraft] = useState<Record<string, string>>(
     {}
   );
+  const [visibleSensitiveFields, setVisibleSensitiveFields] = useState<
+    Record<string, boolean>
+  >({});
   const [saving, setSaving] = useState(false);
   const [oldPasswordInput, setOldPasswordInput] = useState("");
   const [newPasswordInput, setNewPasswordInput] = useState("");
   const [confirmPasswordInput, setConfirmPasswordInput] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
+  const [refreshingMotto, setRefreshingMotto] = useState(false);
+  const [runningCrawler, setRunningCrawler] = useState(false);
   const [resetting, setResetting] = useState(false);
   const fetchSettings = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
@@ -176,6 +186,31 @@ export default function Settings() {
       setResetting(false);
     }
   };
+
+  const handleRefreshMotto = async () => {
+    setRefreshingMotto(true);
+    try {
+      const msg = await refreshMotto();
+      toast.success(msg || "刷新每日一言成功");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "刷新每日一言失败");
+    } finally {
+      setRefreshingMotto(false);
+    }
+  };
+
+  const handleRunCrawler = async () => {
+    setRunningCrawler(true);
+    try {
+      const msg = await runCrawler();
+      toast.success(msg || "手动执行爬虫成功");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "手动执行爬虫失败");
+    } finally {
+      setRunningCrawler(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <Card>
@@ -217,27 +252,6 @@ export default function Settings() {
             </Alert>
           )}
           {!state.loading && entries.length > 0 && (
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {entries.map(([key, value]) => (
-                <Card
-                  key={key}
-                  className="border-slate-200 bg-slate-50 shadow-none"
-                >
-                  <CardHeader className="pb-1">
-                    <CardDescription className="font-mono">
-                      {key}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="max-h-24 overflow-auto break-all font-mono text-sm text-slate-800">
-                      {formatValue(value)}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-          {!state.loading && entries.length > 0 && (
             <Card className="border-slate-200 bg-white shadow-none">
               <CardHeader className="pb-2">
                 <CardDescription>修改系统设置</CardDescription>
@@ -262,16 +276,45 @@ export default function Settings() {
                           className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
                       ) : (
-                        <input
-                          value={settingsDraft[key] ?? ""}
-                          onChange={(event) =>
-                            setSettingsDraft((prev) => ({
-                              ...prev,
-                              [key]: event.target.value,
-                            }))
-                          }
-                          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                        />
+                        <div className="relative">
+                          <input
+                            type={
+                              isSensitiveSettingKey(key) &&
+                              !visibleSensitiveFields[key]
+                                ? "password"
+                                : "text"
+                            }
+                            autoComplete="off"
+                            value={settingsDraft[key] ?? ""}
+                            onChange={(event) =>
+                              setSettingsDraft((prev) => ({
+                                ...prev,
+                                [key]: event.target.value,
+                              }))
+                            }
+                            className={`w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
+                              isSensitiveSettingKey(key) ? "pr-10" : ""
+                            }`}
+                          />
+                          {isSensitiveSettingKey(key) && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setVisibleSensitiveFields((prev) => ({
+                                  ...prev,
+                                  [key]: !prev[key],
+                                }))
+                              }
+                              className="absolute inset-y-0 right-2 inline-flex items-center text-slate-500 transition hover:text-slate-700"
+                            >
+                              {visibleSensitiveFields[key] ? (
+                                <EyeOff size={16} />
+                              ) : (
+                                <Eye size={16} />
+                              )}
+                            </button>
+                          )}
+                        </div>
                       )}
                       {SETTING_FIELD_HINTS[key] && (
                         <p className="text-xs text-slate-500">
@@ -324,6 +367,40 @@ export default function Settings() {
                 >
                   {changingPassword ? "提交中..." : "修改密码"}
                 </Button>
+              </CardContent>
+            </Card>
+          )}
+          {!state.loading && entries.length > 0 && (
+            <Card className="border-slate-200 bg-white shadow-none">
+              <CardHeader className="pb-2">
+                <CardDescription>每日一言</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex justify-end">
+                  <Button
+                    onClick={() => void handleRefreshMotto()}
+                    disabled={refreshingMotto}
+                  >
+                    {refreshingMotto ? "刷新中..." : "手动刷新每日一言"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          {!state.loading && entries.length > 0 && (
+            <Card className="border-slate-200 bg-white shadow-none">
+              <CardHeader className="pb-2">
+                <CardDescription>爬虫</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex justify-end">
+                  <Button
+                    onClick={() => void handleRunCrawler()}
+                    disabled={runningCrawler}
+                  >
+                    {runningCrawler ? "执行中..." : "手动执行爬虫"}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           )}
