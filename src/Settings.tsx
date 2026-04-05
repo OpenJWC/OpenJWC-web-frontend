@@ -20,6 +20,7 @@ import {
   updateSettings,
 } from "./services/settingsService";
 import type { SettingsData } from "./types/settings";
+
 type SettingsState = {
   data: SettingsData | null;
   loading: boolean;
@@ -82,6 +83,7 @@ export default function Settings() {
   const [refreshingMotto, setRefreshingMotto] = useState(false);
   const [runningCrawler, setRunningCrawler] = useState(false);
   const [resetting, setResetting] = useState(false);
+
   const fetchSettings = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
@@ -100,9 +102,11 @@ export default function Settings() {
       }));
     }
   }, []);
+
   useEffect(() => {
     void fetchSettings();
   }, [fetchSettings]);
+
   useEffect(() => {
     if (!state.data) {
       return;
@@ -113,7 +117,9 @@ export default function Settings() {
     });
     setSettingsDraft(nextDraft);
   }, [state.data]);
+
   const entries = useMemo(() => Object.entries(state.data ?? {}), [state.data]);
+
   const handleUpdate = async () => {
     const payload: Record<string, unknown> = {};
     Object.entries(settingsDraft).forEach(([key, value]) => {
@@ -137,6 +143,7 @@ export default function Settings() {
       setSaving(false);
     }
   };
+
   const handleChangePassword = async () => {
     const oldPassword = oldPasswordInput.trim();
     const newPassword = newPasswordInput.trim();
@@ -212,7 +219,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-slide-up">
       <Card>
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between gap-3">
@@ -221,10 +228,11 @@ export default function Settings() {
             </div>
             <Button
               variant="outline"
+              size="sm"
               onClick={() => void fetchSettings()}
               disabled={state.loading}
             >
-              <RefreshCw className="mr-1 h-4 w-4" />
+              <RefreshCw className="mr-1.5 h-4 w-4" />
               刷新
             </Button>
           </div>
@@ -236,13 +244,15 @@ export default function Settings() {
               <AlertDescription>{state.error}</AlertDescription>
             </Alert>
           )}
+
           {state.loading && (
             <div className="grid gap-3 md:grid-cols-3">
-              <Skeleton className="h-24" />
-              <Skeleton className="h-24" />
-              <Skeleton className="h-24" />
+              <Skeleton className="h-28 rounded-xl" />
+              <Skeleton className="h-28 rounded-xl" />
+              <Skeleton className="h-28 rounded-xl" />
             </div>
           )}
+
           {!state.loading && !state.error && entries.length === 0 && (
             <Alert>
               <AlertTitle>暂无数据</AlertTitle>
@@ -251,16 +261,18 @@ export default function Settings() {
               </AlertDescription>
             </Alert>
           )}
+
+          {/* Settings Form */}
           {!state.loading && entries.length > 0 && (
-            <Card className="border-slate-200 bg-white shadow-none">
+            <Card className="border-ink-200/60 bg-white shadow-none">
               <CardHeader className="pb-2">
                 <CardDescription>修改系统设置</CardDescription>
               </CardHeader>
-              <CardContent className="grid gap-3">
-                <div className="grid gap-3 md:grid-cols-2">
+              <CardContent className="grid gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
                   {entries.map(([key]) => (
-                    <div className="space-y-1" key={key}>
-                      <label className="text-xs font-medium text-slate-600">
+                    <div className="space-y-1.5" key={key}>
+                      <label className="text-xs font-semibold uppercase tracking-wide text-ink-500">
                         {key}
                       </label>
                       {key.includes("prompt") ? (
@@ -273,7 +285,7 @@ export default function Settings() {
                             }))
                           }
                           rows={3}
-                          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                          className="w-full rounded-xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-900 outline-none transition-all duration-200 placeholder:text-ink-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
                         />
                       ) : (
                         <div className="relative">
@@ -292,8 +304,8 @@ export default function Settings() {
                                 [key]: event.target.value,
                               }))
                             }
-                            className={`w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
-                              isSensitiveSettingKey(key) ? "pr-10" : ""
+                            className={`w-full rounded-xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-900 outline-none transition-all duration-200 placeholder:text-ink-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-100 ${
+                              isSensitiveSettingKey(key) ? "pr-11" : ""
                             }`}
                           />
                           {isSensitiveSettingKey(key) && (
@@ -305,7 +317,7 @@ export default function Settings() {
                                   [key]: !prev[key],
                                 }))
                               }
-                              className="absolute inset-y-0 right-2 inline-flex items-center text-slate-500 transition hover:text-slate-700"
+                              className="absolute inset-y-0 right-0 flex items-center px-4 text-ink-400 transition-colors hover:text-ink-600"
                             >
                               {visibleSensitiveFields[key] ? (
                                 <EyeOff size={16} />
@@ -317,14 +329,14 @@ export default function Settings() {
                         </div>
                       )}
                       {SETTING_FIELD_HINTS[key] && (
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-ink-400">
                           {SETTING_FIELD_HINTS[key]}
                         </p>
                       )}
                     </div>
                   ))}
                 </div>
-                <div className="flex justify-end">
+                <div className="flex justify-end pt-2">
                   <Button onClick={() => void handleUpdate()} disabled={saving}>
                     {saving ? "保存中..." : "保存设置"}
                   </Button>
@@ -332,8 +344,10 @@ export default function Settings() {
               </CardContent>
             </Card>
           )}
+
+          {/* Password Change */}
           {!state.loading && entries.length > 0 && (
-            <Card className="border-slate-200 bg-white shadow-none">
+            <Card className="border-ink-200/60 bg-white shadow-none">
               <CardHeader className="pb-2">
                 <CardDescription>修改管理员密码</CardDescription>
               </CardHeader>
@@ -343,14 +357,14 @@ export default function Settings() {
                   onChange={(event) => setOldPasswordInput(event.target.value)}
                   type="password"
                   placeholder="旧密码"
-                  className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="rounded-xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-900 outline-none transition-all duration-200 placeholder:text-ink-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
                 />
                 <input
                   value={newPasswordInput}
                   onChange={(event) => setNewPasswordInput(event.target.value)}
                   type="password"
                   placeholder="新密码（至少 6 位）"
-                  className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="rounded-xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-900 outline-none transition-all duration-200 placeholder:text-ink-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
                 />
                 <input
                   value={confirmPasswordInput}
@@ -359,7 +373,7 @@ export default function Settings() {
                   }
                   type="password"
                   placeholder="确认新密码"
-                  className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="rounded-xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-900 outline-none transition-all duration-200 placeholder:text-ink-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
                 />
                 <Button
                   onClick={() => void handleChangePassword()}
@@ -370,14 +384,17 @@ export default function Settings() {
               </CardContent>
             </Card>
           )}
+
+          {/* Daily Motto */}
           {!state.loading && entries.length > 0 && (
-            <Card className="border-slate-200 bg-white shadow-none">
+            <Card className="border-ink-200/60 bg-white shadow-none">
               <CardHeader className="pb-2">
                 <CardDescription>每日一言</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex justify-end">
                   <Button
+                    variant="outline"
                     onClick={() => void handleRefreshMotto()}
                     disabled={refreshingMotto}
                   >
@@ -387,14 +404,17 @@ export default function Settings() {
               </CardContent>
             </Card>
           )}
+
+          {/* Crawler */}
           {!state.loading && entries.length > 0 && (
-            <Card className="border-slate-200 bg-white shadow-none">
+            <Card className="border-ink-200/60 bg-white shadow-none">
               <CardHeader className="pb-2">
                 <CardDescription>爬虫</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex justify-end">
                   <Button
+                    variant="outline"
                     onClick={() => void handleRunCrawler()}
                     disabled={runningCrawler}
                   >
@@ -404,15 +424,17 @@ export default function Settings() {
               </CardContent>
             </Card>
           )}
+
+          {/* Reset */}
           {!state.loading && entries.length > 0 && (
-            <Card className="border-slate-200 bg-white shadow-none">
+            <Card className="border-red-200/60 bg-red-50/30 shadow-none">
               <CardHeader className="pb-2">
-                <CardDescription>重置系统设置</CardDescription>
+                <CardDescription className="text-red-600/70">重置系统设置</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex justify-end">
                   <Button
-                    className="bg-red-600 hover:bg-red-700"
+                    variant="danger"
                     onClick={() => void handleResetSettings()}
                     disabled={resetting}
                   >
@@ -422,9 +444,10 @@ export default function Settings() {
               </CardContent>
             </Card>
           )}
+
           {state.lastUpdatedAt && (
-            <p className="text-xs text-slate-500">
-              上次更新时间：
+            <p className="text-xs text-ink-400">
+              上次更新时间：{" "}
               {new Date(state.lastUpdatedAt).toLocaleString("zh-CN")}
             </p>
           )}

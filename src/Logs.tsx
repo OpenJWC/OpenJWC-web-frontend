@@ -27,7 +27,7 @@ function getLevelClass(level: string): string {
     return "bg-blue-100 text-blue-700 ring-blue-200";
   }
   if (["debug", "trace"].includes(normalized)) {
-    return "bg-slate-100 text-slate-700 ring-slate-200";
+    return "bg-ink-100 text-ink-600 ring-ink-200";
   }
   if (["success", "ok"].includes(normalized)) {
     return "bg-emerald-100 text-emerald-700 ring-emerald-200";
@@ -130,38 +130,39 @@ export default function Logs() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="space-y-4 animate-slide-up">
+      {/* Header Card */}
+      <div className="rounded-2xl border border-ink-200/60 bg-white p-5 shadow-card">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-lg font-semibold text-slate-900">日志列表</h1>
-            <p className="text-sm text-slate-500">共 {state.total} 条</p>
+            <h1 className="font-display text-xl text-ink-900">日志列表</h1>
+            <p className="mt-0.5 text-sm text-ink-500">共 {state.total} 条</p>
           </div>
           <button
             type="button"
             onClick={() => void handleRefresh()}
             disabled={state.loading}
-            className="inline-flex items-center gap-1 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 transition-all duration-200 hover:border-ink-300 hover:bg-ink-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <RefreshCw size={16} />
+            <RefreshCw size={15} />
             刷新
           </button>
         </div>
 
         <form
           onSubmit={handleSearch}
-          className="mt-4 grid gap-3 md:grid-cols-5"
+          className="mt-5 grid gap-3 md:grid-cols-5"
         >
           <input
             value={levelInput}
             onChange={(event) => setLevelInput(event.target.value)}
             placeholder="level（可选）"
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            className="rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm text-ink-900 outline-none transition-all duration-200 placeholder:text-ink-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
           />
           <select
             value={moduleInput}
             onChange={(event) => setModuleInput(event.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            className="rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm text-ink-900 outline-none transition-all duration-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
           >
             <option value="">全部模块</option>
             {moduleOptions.map((module) => (
@@ -174,7 +175,7 @@ export default function Logs() {
             value={keywordInput}
             onChange={(event) => setKeywordInput(event.target.value)}
             placeholder="keyword（可选）"
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            className="rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm text-ink-900 outline-none transition-all duration-200 placeholder:text-ink-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
           />
           <input
             value={sizeInput}
@@ -182,39 +183,40 @@ export default function Logs() {
             type="number"
             min={1}
             placeholder="size"
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            className="rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm text-ink-900 outline-none transition-all duration-200 placeholder:text-ink-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
           />
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-ink-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-ink-800 hover:shadow active:scale-[0.98]"
           >
-            <Search size={16} />
+            <Search size={15} />
             查询
           </button>
         </form>
         {moduleError && (
-          <p className="mt-2 text-xs text-red-500">{moduleError}</p>
+          <p className="mt-3 text-xs text-red-500">{moduleError}</p>
         )}
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      {/* Table */}
+      <div className="overflow-hidden rounded-2xl border border-ink-200/60 bg-white shadow-card">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 text-sm">
-            <thead className="bg-slate-50">
-              <tr className="text-left text-slate-600">
-                <th className="px-4 py-3 font-medium">时间</th>
-                <th className="px-4 py-3 font-medium">等级</th>
-                <th className="px-4 py-3 font-medium">模块</th>
-                <th className="px-4 py-3 font-medium">位置</th>
-                <th className="px-4 py-3 font-medium">日志正文</th>
+          <table className="min-w-full divide-y divide-ink-200/50 text-sm">
+            <thead className="bg-ink-50/50">
+              <tr className="text-left text-ink-500">
+                <th className="px-4 py-3.5 font-semibold">时间</th>
+                <th className="px-4 py-3.5 font-semibold">等级</th>
+                <th className="px-4 py-3.5 font-semibold">模块</th>
+                <th className="px-4 py-3.5 font-semibold">位置</th>
+                <th className="px-4 py-3.5 font-semibold">日志正文</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-ink-200/50">
               {state.loading &&
                 Array.from({ length: 8 }).map((_, index) => (
                   <tr key={index}>
-                    <td className="px-4 py-3" colSpan={5}>
-                      <div className="h-4 animate-pulse rounded bg-slate-200" />
+                    <td className="px-4 py-3.5" colSpan={5}>
+                      <div className="h-4 animate-pulse rounded-lg bg-gradient-to-r from-ink-100 via-ink-200 to-ink-100 bg-[length:200%_100%]" />
                     </td>
                   </tr>
                 ))}
@@ -222,12 +224,12 @@ export default function Logs() {
                 state.logs.map((log, index) => (
                   <tr
                     key={`${log.timestamp}-${index}`}
-                    className="text-slate-700"
+                    className="text-ink-700 transition-colors hover:bg-ink-50/50"
                   >
-                    <td className="whitespace-nowrap px-4 py-3">
+                    <td className="whitespace-nowrap px-4 py-3.5 font-mono text-xs">
                       {log.timestamp}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <span
                         className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${getLevelClass(
                           log.level
@@ -236,9 +238,9 @@ export default function Logs() {
                         {log.level}
                       </span>
                     </td>
-                    <td className="px-4 py-3">{log.module}</td>
-                    <td className="px-4 py-3">{log.location}</td>
-                    <td className="max-w-[520px] break-all px-4 py-3">
+                    <td className="px-4 py-3.5">{log.module}</td>
+                    <td className="px-4 py-3.5 font-mono text-xs">{log.location}</td>
+                    <td className="max-w-[520px] break-all px-4 py-3.5">
                       {log.message}
                     </td>
                   </tr>
@@ -246,7 +248,7 @@ export default function Logs() {
               {!state.loading && state.logs.length === 0 && (
                 <tr>
                   <td
-                    className="px-4 py-8 text-center text-slate-500"
+                    className="px-4 py-12 text-center text-ink-400"
                     colSpan={5}
                   >
                     暂无匹配日志
@@ -260,23 +262,24 @@ export default function Logs() {
 
       {state.error && <p className="text-sm text-red-500">{state.error}</p>}
 
+      {/* Pagination */}
       <div className="flex items-center justify-end gap-2">
         <button
           type="button"
           onClick={() => setPage((prev) => Math.max(1, prev - 1))}
           disabled={page <= 1 || state.loading}
-          className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-xl border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 transition-all duration-200 hover:border-ink-300 hover:bg-ink-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
           上一页
         </button>
-        <span className="text-sm text-slate-600">
+        <span className="px-3 text-sm text-ink-600">
           {page} / {totalPages}
         </span>
         <button
           type="button"
           onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
           disabled={page >= totalPages || state.loading}
-          className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-xl border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 transition-all duration-200 hover:border-ink-300 hover:bg-ink-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
           下一页
         </button>

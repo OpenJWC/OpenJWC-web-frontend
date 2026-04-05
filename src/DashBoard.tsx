@@ -66,7 +66,7 @@ export default function DashBoard() {
   }, [fetchSysInfo]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-slide-up">
       <Card>
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between gap-3">
@@ -76,15 +76,16 @@ export default function DashBoard() {
             </div>
             <Button
               variant="outline"
+              size="sm"
               onClick={() => void fetchSysInfo()}
               disabled={state.loading}
             >
-              <RefreshCw className="mr-1 h-4 w-4" />
+              <RefreshCw className="mr-1.5 h-4 w-4" />
               刷新
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5">
           {state.error && (
             <Alert variant="destructive">
               <AlertTitle>获取失败</AlertTitle>
@@ -94,10 +95,10 @@ export default function DashBoard() {
 
           {state.loading && (
             <div className="grid gap-3 md:grid-cols-2">
-              <Skeleton className="h-24" />
-              <Skeleton className="h-24" />
-              <Skeleton className="h-24" />
-              <Skeleton className="h-24" />
+              <Skeleton className="h-28 rounded-xl" />
+              <Skeleton className="h-28 rounded-xl" />
+              <Skeleton className="h-28 rounded-xl" />
+              <Skeleton className="h-28 rounded-xl" />
             </div>
           )}
 
@@ -116,8 +117,8 @@ export default function DashBoard() {
           {!state.loading &&
             state.sysInfo &&
             Object.keys(state.sysInfo).length > 0 && (
-              <div className="space-y-2">
-                <h2 className="text-sm font-semibold text-slate-700">
+              <div className="space-y-3">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-500">
                   系统信息
                 </h2>
                 <DashboardSysInfo {...state.sysInfo} />
@@ -127,8 +128,8 @@ export default function DashBoard() {
           {!state.loading &&
             state.stats &&
             Object.keys(state.stats).length > 0 && (
-              <div className="space-y-2">
-                <h2 className="text-sm font-semibold text-slate-700">
+              <div className="space-y-3">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-500">
                   业务信息
                 </h2>
                 <DashboardBusinessStats {...state.stats} />
@@ -136,8 +137,8 @@ export default function DashBoard() {
             )}
 
           {state.lastUpdatedAt && (
-            <p className="text-xs text-slate-500">
-              上次更新时间：
+            <p className="text-xs text-ink-400">
+              上次更新时间：{" "}
               {new Date(state.lastUpdatedAt).toLocaleString("zh-CN")}
             </p>
           )}

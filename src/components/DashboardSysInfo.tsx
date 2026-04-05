@@ -53,6 +53,7 @@ export default function DashboardSysInfo({
       textStyle: {
         fontSize: 14,
         fontWeight: 500,
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
       },
     },
     series: [
@@ -97,6 +98,7 @@ export default function DashboardSysInfo({
       textStyle: {
         fontSize: 14,
         fontWeight: 500,
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
       },
     },
     tooltip: {
@@ -109,6 +111,7 @@ export default function DashboardSysInfo({
       itemHeight: 12,
       textStyle: {
         fontSize: 12,
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
       },
     },
     series: [
@@ -120,6 +123,7 @@ export default function DashboardSysInfo({
         label: {
           formatter: "{b}\n{d}%",
           fontSize: 11,
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
         },
         data: [
           { value: usedRam, name: "已用内存", itemStyle: { color: "#3b82f6" } },
@@ -133,59 +137,61 @@ export default function DashboardSysInfo({
 
   return (
     <div className="space-y-4">
+      {/* Stat Cards */}
       <div className="grid gap-3 md:grid-cols-3">
-        <Card className="border-slate-200 bg-slate-50 shadow-none">
+        <Card className="border-ink-200/50 bg-ink-50/50 shadow-none">
           <CardHeader className="pb-1">
             <CardDescription>CPU 使用率</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold text-slate-900">
+            <p className="font-display text-3xl text-ink-900">
               {cpuValue.toFixed(1)}%
             </p>
           </CardContent>
         </Card>
-        <Card className="border-slate-200 bg-slate-50 shadow-none">
+        <Card className="border-ink-200/50 bg-ink-50/50 shadow-none">
           <CardHeader className="pb-1">
             <CardDescription>内存</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold text-slate-900">
+            <p className="font-display text-3xl text-ink-900">
               {usedRam.toFixed(0)} / {totalRam.toFixed(0)} MB
             </p>
           </CardContent>
         </Card>
-        <Card className="border-slate-200 bg-slate-50 shadow-none">
+        <Card className="border-ink-200/50 bg-ink-50/50 shadow-none">
           <CardHeader className="pb-1">
             <CardDescription>运行时长</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold text-slate-900">
+            <p className="font-display text-3xl text-ink-900">
               {formatDuration(uptime)}
             </p>
           </CardContent>
         </Card>
       </div>
 
+      {/* Charts */}
       <div className="grid gap-4 lg:grid-cols-5">
-        <Card className="border-slate-200 bg-white shadow-none lg:col-span-2">
+        <Card className="border-ink-200/60 bg-white shadow-none lg:col-span-2">
           <CardContent className="p-3">
             <ReactEcharts option={cpuOption} style={{ height: 300 }} />
           </CardContent>
         </Card>
-        <Card className="border-slate-200 bg-white shadow-none lg:col-span-3">
+        <Card className="border-ink-200/60 bg-white shadow-none lg:col-span-3">
           <CardContent className="p-3">
             <div className="grid gap-3 lg:grid-cols-2">
               <ReactEcharts option={memoryOption} style={{ height: 300 }} />
-              <div className="flex flex-col justify-center rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm text-slate-500">已用内存</p>
-                <p className="mt-1 text-2xl font-semibold text-slate-900">
+              <div className="flex flex-col justify-center rounded-xl border border-ink-200/60 bg-ink-50/50 p-5">
+                <p className="text-sm text-ink-500">已用内存</p>
+                <p className="mt-1 font-display text-2xl text-ink-900">
                   {usedRam.toFixed(0)} MB
                 </p>
-                <p className="mt-3 text-sm text-slate-500">剩余内存</p>
-                <p className="mt-1 text-2xl font-semibold text-slate-900">
+                <p className="mt-4 text-sm text-ink-500">剩余内存</p>
+                <p className="mt-1 font-display text-2xl text-ink-900">
                   {freeRam.toFixed(0)} MB
                 </p>
-                <p className="mt-3 text-xs text-slate-500">
+                <p className="mt-4 text-xs text-ink-400">
                   占用率{" "}
                   {totalRam > 0
                     ? ((usedRam / totalRam) * 100).toFixed(1)
@@ -198,8 +204,9 @@ export default function DashboardSysInfo({
         </Card>
       </div>
 
+      {/* Extra Fields */}
       {extraEntries.length > 0 && (
-        <Card className="border-slate-200 bg-slate-50 shadow-none">
+        <Card className="border-ink-200/50 bg-ink-50/50 shadow-none">
           <CardHeader className="pb-2">
             <CardDescription>附加字段</CardDescription>
           </CardHeader>
@@ -207,10 +214,10 @@ export default function DashboardSysInfo({
             {extraEntries.map(([key, value]) => (
               <div
                 key={key}
-                className="flex items-start justify-between gap-4 border-b border-slate-200 pb-2"
+                className="flex items-start justify-between gap-4 border-b border-ink-200/50 pb-2 last:border-0 last:pb-0"
               >
-                <span className="text-sm text-slate-500">{key}</span>
-                <span className="max-w-[70%] break-all text-right text-sm font-medium text-slate-800">
+                <span className="text-sm text-ink-500">{key}</span>
+                <span className="max-w-[70%] break-all text-right text-sm font-medium text-ink-700">
                   {typeof value === "string" ? value : JSON.stringify(value)}
                 </span>
               </div>

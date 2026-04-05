@@ -1,4 +1,5 @@
 import { apiClient } from "../api/client";
+import { isAxiosError } from "axios";
 import type {
   ChangePasswordPayload,
   ChangePasswordResponse,
@@ -158,12 +159,26 @@ function parseRunCrawlerResponse(response: RunCrawlerResponse): string {
 }
 
 export async function runCrawler(): Promise<string> {
-  const response = await apiClient.put<RunCrawlerResponse>(
-    "/api/v1/admin/settings/crawler",
-    {},
-    {
-      headers: createSettingsHeaders(),
+  try {
+    const response = await apiClient.put<RunCrawlerResponse>(
+      "/api/v1/admin/settings/crawler",
+      {},
+      {
+        headers: createSettingsHeaders(),
+      }
+    );
+    return parseRunCrawlerResponse(response.data);
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 404) {
+      const response = await apiClient.put<RunCrawlerResponse>(
+        "/api/v1/admin/settings/crawler/",
+        {},
+        {
+          headers: createSettingsHeaders(),
+        }
+      );
+      return parseRunCrawlerResponse(response.data);
     }
-  );
-  return parseRunCrawlerResponse(response.data);
+    throw error;
+  }
 }
