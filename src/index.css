@@ -1,17 +1,115 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@400;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --color-ink: #1c1917;
-  --color-ink-light: #44403c;
-  --color-amber: #d97706;
-  --color-amber-light: #fbbf24;
-  --color-cream: #FAFAF8;
-  --color-cream-dark: #f0efe9;
-  --color-border: #e8e6e1;
+  --font-sans: "Plus Jakarta Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-display: "DM Serif Display", "Songti SC", "STSong", serif;
+  --color-ink-50: 248 247 244;
+  --color-ink-100: 240 239 233;
+  --color-ink-200: 232 230 225;
+  --color-ink-300: 214 211 199;
+  --color-ink-400: 184 180 165;
+  --color-ink-500: 156 151 132;
+  --color-ink-600: 125 121 106;
+  --color-ink-700: 101 98 88;
+  --color-ink-800: 83 79 70;
+  --color-ink-900: 28 25 23;
+  --color-amber-50: 255 251 235;
+  --color-amber-100: 254 243 199;
+  --color-amber-200: 253 230 138;
+  --color-amber-300: 252 211 77;
+  --color-amber-400: 251 191 36;
+  --color-amber-500: 245 158 11;
+  --color-amber-600: 217 119 6;
+  --color-amber-700: 180 83 9;
+  --color-amber-800: 146 64 14;
+  --color-amber-900: 120 53 15;
+  --color-cream: 250 250 248;
+}
+
+:root[data-color-tone="ocean"] {
+  --color-ink-50: 245 248 252;
+  --color-ink-100: 234 240 247;
+  --color-ink-200: 215 224 236;
+  --color-ink-300: 187 199 216;
+  --color-ink-400: 149 165 186;
+  --color-ink-500: 116 132 156;
+  --color-ink-600: 88 103 128;
+  --color-ink-700: 65 79 102;
+  --color-ink-800: 45 57 79;
+  --color-ink-900: 26 35 54;
+  --color-amber-50: 239 248 255;
+  --color-amber-100: 219 234 254;
+  --color-amber-200: 191 219 254;
+  --color-amber-300: 147 197 253;
+  --color-amber-400: 96 165 250;
+  --color-amber-500: 59 130 246;
+  --color-amber-600: 37 99 235;
+  --color-amber-700: 29 78 216;
+  --color-amber-800: 30 64 175;
+  --color-amber-900: 30 58 138;
+  --color-cream: 246 249 252;
+}
+
+:root[data-color-tone="forest"] {
+  --color-ink-50: 245 248 244;
+  --color-ink-100: 235 240 233;
+  --color-ink-200: 216 226 218;
+  --color-ink-300: 188 202 191;
+  --color-ink-400: 150 170 155;
+  --color-ink-500: 114 137 121;
+  --color-ink-600: 85 107 90;
+  --color-ink-700: 61 83 67;
+  --color-ink-800: 42 60 47;
+  --color-ink-900: 24 39 29;
+  --color-amber-50: 240 253 244;
+  --color-amber-100: 220 252 231;
+  --color-amber-200: 187 247 208;
+  --color-amber-300: 134 239 172;
+  --color-amber-400: 74 222 128;
+  --color-amber-500: 34 197 94;
+  --color-amber-600: 22 163 74;
+  --color-amber-700: 21 128 61;
+  --color-amber-800: 22 101 52;
+  --color-amber-900: 20 83 45;
+  --color-cream: 247 250 246;
+}
+
+:root[data-color-tone="plum"] {
+  --color-ink-50: 248 246 251;
+  --color-ink-100: 239 235 245;
+  --color-ink-200: 225 218 235;
+  --color-ink-300: 201 191 216;
+  --color-ink-400: 168 155 188;
+  --color-ink-500: 137 122 159;
+  --color-ink-600: 107 92 128;
+  --color-ink-700: 84 70 102;
+  --color-ink-800: 61 49 77;
+  --color-ink-900: 39 29 49;
+  --color-amber-50: 250 245 255;
+  --color-amber-100: 243 232 255;
+  --color-amber-200: 233 213 255;
+  --color-amber-300: 216 180 254;
+  --color-amber-400: 192 132 252;
+  --color-amber-500: 168 85 247;
+  --color-amber-600: 147 51 234;
+  --color-amber-700: 126 34 206;
+  --color-amber-800: 107 33 168;
+  --color-amber-900: 88 28 135;
+  --color-cream: 250 247 252;
+}
+
+:root[data-font-preset="modern"] {
+  --font-sans: "Manrope", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-display: "Manrope", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+:root[data-font-preset="literary"] {
+  --font-sans: "Merriweather", "Georgia", "Songti SC", serif;
+  --font-display: "Merriweather", "Georgia", "Songti SC", serif;
 }
 
 * {
@@ -23,15 +121,15 @@ html {
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-  background-color: var(--color-cream);
-  color: var(--color-ink);
+  font-family: var(--font-sans);
+  background-color: rgb(var(--color-cream));
+  color: rgb(var(--color-ink-900));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'DM Serif Display', Georgia, serif;
+  font-family: var(--font-display);
   font-weight: 400;
 }
 
@@ -42,28 +140,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-cream-dark);
+  background: rgb(var(--color-ink-100));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d6d3c7;
+  background: rgb(var(--color-ink-300));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b8b4a5;
+  background: rgb(var(--color-ink-400));
 }
 
 /* Selection color */
 ::selection {
-  background-color: #fef3c7;
-  color: var(--color-ink);
+  background-color: rgb(var(--color-amber-100));
+  color: rgb(var(--color-ink-900));
 }
 
 /* Focus visible for accessibility */
 :focus-visible {
-  outline: 2px solid var(--color-amber);
+  outline: 2px solid rgb(var(--color-amber-600));
   outline-offset: 2px;
 }
 

@@ -4,8 +4,11 @@ import {
   Logs,
   MessageSquareText,
   Settings,
+  UserCheck,
+  UserPlus,
   Users,
 } from "lucide-react";
+import logoIcon from "./assets/icon_test.png";
 import { useNavigate } from "react-router-dom";
 import { logout } from "./store/authSlice";
 import { useAppDispatch } from "./store/hooks";
@@ -15,6 +18,8 @@ const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/logs", label: "Logs", icon: Logs },
   { to: "/reviews", label: "Reviews", icon: MessageSquareText },
+  { to: "/user-registrations", label: "Registrations", icon: UserPlus },
+  { to: "/approved-users", label: "Members", icon: UserCheck },
   { to: "/settings", label: "Settings", icon: Settings },
   { to: "/users", label: "Users", icon: Users },
 ];
@@ -34,7 +39,11 @@ export default function NavBar() {
         <div className="flex items-center justify-between rounded-2xl border border-ink-200/60 bg-white px-5 py-2.5 shadow-nav">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <img src="/src/assets/icon_test.png" alt="OPENJWC" className="h-10 w-10 rounded-xl object-cover shadow-sm" />
+            <img
+              src={logoIcon}
+              alt="OPENJWC"
+              className="h-10 w-10 rounded-xl object-cover shadow-sm"
+            />
             <span className="font-display text-xl tracking-wide text-ink-900">
               OPENJWC
             </span>

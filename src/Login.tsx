@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
+import logoIcon from "./assets/icon_test.png";
 import { clearAuthError, login } from "./store/authSlice";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 
@@ -75,11 +76,13 @@ export default function Login() {
         <div className="rounded-3xl border border-ink-200/60 bg-white p-8 shadow-nav">
           {/* Header */}
           <div className="mb-8 flex items-center gap-4">
-            <img src="/src/assets/icon_test.png" alt="OPENJWC" className="h-14 w-14 rounded-2xl object-cover shadow-md" />
+            <img
+              src={logoIcon}
+              alt="OPENJWC"
+              className="h-14 w-14 rounded-2xl object-cover shadow-md"
+            />
             <div>
-              <h1 className="font-display text-3xl text-ink-900">
-                管理员登录
-              </h1>
+              <h1 className="font-display text-3xl text-ink-900">管理员登录</h1>
               <p className="mt-1 text-sm text-ink-500">
                 登录后可访问控制面板功能
               </p>
@@ -104,7 +107,9 @@ export default function Login() {
                 {...register("username")}
               />
               {errors.username && (
-                <p className="text-xs text-red-500">{errors.username.message}</p>
+                <p className="text-xs text-red-500">
+                  {errors.username.message}
+                </p>
               )}
             </div>
 
@@ -133,7 +138,9 @@ export default function Login() {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-red-500">{errors.password.message}</p>
+                <p className="text-xs text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 

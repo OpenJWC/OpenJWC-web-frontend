@@ -5,6 +5,8 @@ import DashBoard from "./DashBoard";
 import Logs from "./Logs";
 import Reviews from "./Reviews";
 import Settings from "./Settings";
+import ApprovedUsers from "./ApprovedUsers";
+import UserRegistrations from "./UserRegistrations";
 import Users from "./Users";
 import Login from "./Login";
 
@@ -26,6 +28,8 @@ function App() {
             <Route path="logs" element={<Logs />} />
             <Route path="reviews" element={<Reviews />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="approved-users" element={<ApprovedUsers />} />
+            <Route path="user-registrations" element={<UserRegistrations />} />
             <Route path="users" element={<Users />} />
           </Route>
         </Route>

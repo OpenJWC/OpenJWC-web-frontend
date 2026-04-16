@@ -7,7 +7,10 @@ import "react-toastify/dist/ReactToastify.css";
 import App from "./App.tsx";
 import AxiosAuthSync from "./AxiosAuthSync.tsx";
 import "./index.css";
+import { initializeUIPreferences } from "./lib/uiPreferences";
 import { persistor, store } from "./store";
+
+initializeUIPreferences();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

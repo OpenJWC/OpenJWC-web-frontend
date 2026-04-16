@@ -12,6 +12,15 @@ import {
 } from "./components/ui/card";
 import { Skeleton } from "./components/ui/skeleton";
 import {
+  applyUIPreferences,
+  COLOR_TONE_OPTIONS,
+  DEFAULT_UI_PREFERENCES,
+  FONT_PRESET_OPTIONS,
+  loadUIPreferences,
+  saveUIPreferences,
+  type UIPreferences,
+} from "./lib/uiPreferences";
+import {
   changeAdminPassword,
   getSettings,
   refreshMotto,
@@ -83,6 +92,8 @@ export default function Settings() {
   const [refreshingMotto, setRefreshingMotto] = useState(false);
   const [runningCrawler, setRunningCrawler] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [uiDraft, setUiDraft] = useState<UIPreferences>(DEFAULT_UI_PREFERENCES);
+  const [uiSaving, setUiSaving] = useState(false);
 
   const fetchSettings = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
@@ -106,6 +117,14 @@ export default function Settings() {
   useEffect(() => {
     void fetchSettings();
   }, [fetchSettings]);
+
+  useEffect(() => {
+    setUiDraft(loadUIPreferences());
+  }, []);
+
+  useEffect(() => {
+    applyUIPreferences(uiDraft);
+  }, [uiDraft]);
 
   useEffect(() => {
     if (!state.data) {
@@ -218,6 +237,25 @@ export default function Settings() {
     }
   };
 
+  const handleSaveUIPreferences = async () => {
+    setUiSaving(true);
+    try {
+      saveUIPreferences(uiDraft);
+      toast.success("界面风格已保存");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "保存界面风格失败");
+    } finally {
+      setUiSaving(false);
+    }
+  };
+
+  const handleResetUIPreferences = () => {
+    setUiDraft(DEFAULT_UI_PREFERENCES);
+    applyUIPreferences(DEFAULT_UI_PREFERENCES);
+    saveUIPreferences(DEFAULT_UI_PREFERENCES);
+    toast.success("已恢复默认界面风格");
+  };
+
   return (
     <div className="space-y-4 animate-slide-up">
       <Card>
@@ -238,6 +276,119 @@ export default function Settings() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          <Card className="border-ink-200/60 bg-white shadow-none">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xl">界面个性化</CardTitle>
+              <CardDescription>
+                自定义控制台色调与字体，并保存到本地浏览器。
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+                    色调方案
+                  </label>
+                  <select
+                    value={uiDraft.colorTone}
+                    onChange={(event) =>
+                      setUiDraft((prev) => ({
+                        ...prev,
+                        colorTone: event.target
+                          .value as UIPreferences["colorTone"],
+                      }))
+                    }
+                    className="w-full rounded-xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-900 outline-none transition-all duration-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+                  >
+                    {COLOR_TONE_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-ink-400">
+                    {
+                      COLOR_TONE_OPTIONS.find(
+                        (option) => option.value === uiDraft.colorTone
+                      )?.description
+                    }
+                  </p>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+                    字体方案
+                  </label>
+                  <select
+                    value={uiDraft.fontPreset}
+                    onChange={(event) =>
+                      setUiDraft((prev) => ({
+                        ...prev,
+                        fontPreset: event.target
+                          .value as UIPreferences["fontPreset"],
+                      }))
+                    }
+                    className="w-full rounded-xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-900 outline-none transition-all duration-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+                  >
+                    {FONT_PRESET_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-ink-400">
+                    {
+                      FONT_PRESET_OPTIONS.find(
+                        (option) => option.value === uiDraft.fontPreset
+                      )?.description
+                    }
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-ink-200/60 bg-cream p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-ink-500">
+                  预览
+                </p>
+                <div className="mt-3 space-y-2">
+                  <h3 className="font-display text-2xl text-ink-900">
+                    OpenJWC 控制台
+                  </h3>
+                  <p className="text-sm text-ink-600">
+                    预览当前配色和字体设置，保存后会自动写入
+                    <code className="mx-1 rounded bg-ink-100 px-1.5 py-0.5 text-xs">
+                      localStorage
+                    </code>
+                    并在下次进入时恢复。
+                  </p>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700">
+                      主强调色
+                    </span>
+                    <span className="rounded-full bg-ink-100 px-3 py-1 text-xs font-medium text-ink-700">
+                      内容基色
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handleResetUIPreferences}
+                  disabled={uiSaving}
+                >
+                  恢复默认
+                </Button>
+                <Button
+                  onClick={() => void handleSaveUIPreferences()}
+                  disabled={uiSaving}
+                >
+                  {uiSaving ? "保存中..." : "保存界面风格"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {state.error && (
             <Alert variant="destructive">
               <AlertTitle>获取失败</AlertTitle>
@@ -429,7 +580,9 @@ export default function Settings() {
           {!state.loading && entries.length > 0 && (
             <Card className="border-red-200/60 bg-red-50/30 shadow-none">
               <CardHeader className="pb-2">
-                <CardDescription className="text-red-600/70">重置系统设置</CardDescription>
+                <CardDescription className="text-red-600/70">
+                  重置系统设置
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex justify-end">
